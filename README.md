@@ -15,4 +15,4 @@
 ## Credits:
 **Inspired by:** https://youtube.com/playlist?list=PL2zq7klxX5ASFejJj80ob9ZAnBHdz5O1t
 
-**Scraper adapted from:** https://github.com/arapfaik/scraping-glassdoor-selenium
+**Scraper adapted for Australian website as in 2021 from:** https://github.com/arapfaik/scraping-glassdoor-selenium
