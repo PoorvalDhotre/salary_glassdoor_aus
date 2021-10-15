@@ -5,7 +5,7 @@ Created on Sun Oct 10 19:22:25 2021
 @author: poorv
 """
 
-import glassdoor_scraper2 as gs 
+import glassdoor_scraper as gs 
 import pandas as pd 
 
 path = r"C:\Users\poorv\Poorval\Analytics\git\salary_glassdoor_aus\chromedriver.exe"
