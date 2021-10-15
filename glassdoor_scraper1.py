@@ -3,8 +3,8 @@
 Created on Thu Apr  2 09:32:36 2020
 
 author: poorv
-url: https://github.com/arapfaik/scraping-glassdoor-selenium
 """
+
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 from selenium import webdriver
 import time
@@ -37,24 +37,22 @@ def get_jobs(keyword, num_jobs, verbose, path, slp_time):
         time.sleep(slp_time)
 
         #Test for the "Sign Up" prompt and get rid of it.
-        # try:
-        #     driver.find_element_by_class_name("selected").click()
-        # except ElementClickInterceptedException:
-        #     pass
+        try:
+            driver.find_element_by_class_name("selected").click()
+        except ElementClickInterceptedException:
+            pass
 
-             
-        time.sleep(5)
+        time.sleep(.1)
 
         try:
-            driver.find_element_by_class_name('[class='*ArithmeticErrorBz112c-r9oPif']').click() #clicking to the X.
-            print(' x out worked')  
+            driver.find_element_by_css_selector('[alt="Close"]').click() #clicking to the X.
+            print(' x out worked')
         except NoSuchElementException:
             print(' x out failed')
             pass
 
-#<svg class="Bz112c Bz112c-r9oPif" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#5f6368"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path><path fill="none" d="M0 0h24v24H0z"></path></svg>
- 
-       #Going through each job in this page
+        
+        #Going through each job in this page
         job_buttons = driver.find_elements_by_class_name("jl")  #jl for Job Listing. These are the buttons we're going to click.
         for job_button in job_buttons:  
 
