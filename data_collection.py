@@ -12,8 +12,6 @@ path = r"C:\Users\poorv\Poorval\Analytics\git\salary_glassdoor_aus\chromedriver.
 
 
 #Enter Keyword with Hyphens
-df = gs.get_jobs('data scientist','Australia', 350, False, path, 10)
+df = gs.get_jobs(800, False, path, 10)
 
 df.to_csv('glassdoor_jobs.csv', index = False)
-
-

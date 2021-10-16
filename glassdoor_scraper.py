@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import pandas as pd
 
-def get_jobs(keyword, location, num_jobs, verbose, path, slp_time):
+def get_jobs(num_jobs, verbose, path, slp_time):
     
     '''Gathers jobs as a dataframe, scraped from Glassdoor'''
     
@@ -26,7 +26,7 @@ def get_jobs(keyword, location, num_jobs, verbose, path, slp_time):
     #driver.set_window_size(1120, 1000)
 
 
-    url='https://www.glassdoor.com.au/Job/australia-data-scientist-jobs-SRCH_IL.0,9_IN16_KO10,24.htm'
+    url='https://www.glassdoor.com.au/Job/australia-data-scientist-or-data-analyst-jobs-SRCH_IL.0,9_IN16_KW10,40.htm?fromAge=14'
     driver.get(url)
     jobs = []
 
