@@ -11,12 +11,7 @@ df = pd.read_csv('glassdoor_jobs.csv')
 
 
 
-#Salary estimate - New column for Gumtree vs Employer Provided
-#Salary separate columns for min and max
-#Salary check out if any hourly rates
 #job description - Tools, buzzwords, big data tools, cloud, PhD
-#Location collapse suburbs into city names. 
-#Location think about what to do with country and state names
 #Remove the word employees from Size
 #Get Age from Founded.
 #Consider creating Age group categories
@@ -64,7 +59,7 @@ sal_est_glass[0].where(sal_est_glass[1].notna(), inplace=True)
 df['Salary Source'] = sal_est_glass[1].fillna(sal_est_emp[0])
 df['Salary Estimate'] = sal_est_emp[1].fillna(sal_est_glass[0])
 
-#Drop the temporary objects
+#Drop the instrumental objects
 del sal_est_emp, sal_est_glass
 '''
 
@@ -104,7 +99,6 @@ Check for Missing Values
 #df.isnull().sum()
 
 
-
 '''
 Check for dupliated rows
 '''
@@ -119,10 +113,70 @@ Group Locations
 '''
 #df['Location'].value_counts()
 
+#define tuples (since you cannot use a list as a key in dictionaries) to group together related suburbs 
+syd_sub = tuple(['sydney', 'bella vista', 'parramatta', 'liverpool', 'alexandria', 'mascot', 'auburn'])
+mel_sub = tuple(['melbourne', 'frankston','docklands', 'melton'])
+other = tuple(['bunbury', 'darwin', 'bathurst', 'wollongong', 'gold coast'])
+
+#Define dictionary
+group_locations = {syd_sub:'Sydney',mel_sub:'Melbourne', other:'Other'}
+
+#Define a function to check dictionary and assign value
+#Note: we unpack the dictionary using .items() if we want to acces both key and val. otherwise a for loop will iterate over the keys by default
+def loc_simplify(location):
+    for key,val in group_locations.items():
+        if location.lower().strip() in key:
+            location = val    
+    return location
+
+#Map the fucntion over every value in the series using the apply method
+df['Location'] = df['Location'].apply(loc_simplify)
+
+#delete instrumental objects
+del group_locations, mel_sub, other, syd_sub
+
+
+'''
+New feature: Seniority
+'''
+
+senior = ['senior', 'lead', 'principal', 'head']
+junior = ['junior', 'entry level', 'graduate']
+
+df['Seniority']=df['Job Title'].apply(lambda title: 'Senior' if any([x for x in senior if x in title.lower()]) else ('Junior' if any([x for x in junior if x in title.lower()]) else 'Mid'))
+
+
+del senior, junior
+
+#df['Seniority'].value_counts()
+
+'''
+New Feature: Job Function - Analyst vs Scientist
+'''
+#df['Job Title'].value_counts()
+
+#New Feature: Job Function - Analyst vs Scientist
+scientist = ['scientist', 'science', 'machine learning']
+
+df['Job Function'] = df['Job Title'].apply(lambda title: 'Scientist' if any([x for x in scientist if x in title.lower()]) else 'Analyst')
+
+del scientist
+
 
 '''
 Group Company Names
 '''
+#Group the company names that occur less than four times into Other group
+val_counts=df['Company Name'].value_counts()
+
+#creating a list of companies where count<4
+other=list(val_counts.apply(lambda count: count if count<4 else None).dropna().index)
+
+#Grouping companies in the other list into a category
+df['Company Name']=df['Company Name'].apply(lambda name: 'Other' if name in other else name)    
+
+#deleting instrumental columns
+del other, val_counts
 
 '''
 Extract information from Job Description
