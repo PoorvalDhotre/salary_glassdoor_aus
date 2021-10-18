@@ -105,7 +105,7 @@ Check for dupliated rows
 
 #df.duplicated().value_counts()
 
-#NOTE: 353 Rows are duplicates. Not an ideal dataset for Data Science.
+#NOTE: 353 Rows are duplicates. Not an ideal dataset for Data Science but we will use for this project.
 
 
 '''
@@ -136,6 +136,7 @@ df['Location'] = df['Location'].apply(loc_simplify)
 del group_locations, mel_sub, other, syd_sub
 
 
+
 '''
 New feature: Seniority
 '''
@@ -150,6 +151,8 @@ del senior, junior
 
 #df['Seniority'].value_counts()
 
+
+
 '''
 New Feature: Job Function - Analyst vs Scientist
 '''
@@ -161,6 +164,7 @@ scientist = ['scientist', 'science', 'machine learning']
 df['Job Function'] = df['Job Title'].apply(lambda title: 'Scientist' if any([x for x in scientist if x in title.lower()]) else 'Analyst')
 
 del scientist
+
 
 
 '''
@@ -178,6 +182,99 @@ df['Company Name']=df['Company Name'].apply(lambda name: 'Other' if name in othe
 #deleting instrumental columns
 del other, val_counts
 
+
+'''
+Combine -1 and Unknown in Size
+'''
+#df['Size'].value_counts()
+
+df['Size'].replace('-1','Unknown', inplace=True) 
+#Using Pandas replace since replacing the whole value of the cell. If want to replace only part of it, need to use the standard library replace with a lambda fucntion (as we did to remove 'K' and '$')
+
+'''
+Clean up the mismatched data between Founded, Ownership, Industry, Sector, Revenue
+'''
+#Moving from Sector to Revenue
+#df['Sector'].value_counts()
+
+#defining a list of values to be moved from sector to revenue
+sec_to_rev = ['$1 to $2 billion (USD)', '$500 million to $1 billion (USD)','$2 to $5 billion (USD)', '$5 to $10 million (USD)', '$10+ billion (USD)']
+
+#creating a dataframe to check if the wrong values are just stray or are to be transferred to revenue column
+wrong_sector=df[df['Sector'].isin(sec_to_rev)]
+
+#Updating Revenue and deleting from Sector
+df['Revenue'] = df.apply(lambda row: row['Sector'] if row['Sector'] in sec_to_rev else row['Revenue'], axis=1)
+df['Sector'].replace(sec_to_rev, 'Unknown', inplace = True)
+
+del wrong_sector, sec_to_rev
+
+
+#Moving from Ownership to Revenue
+#df['Type of ownership'].value_counts()
+
+df['Revenue'] = df.apply(lambda row: row['Type of ownership'] if row['Type of ownership'] =='$50 to $100 million (USD)' else row['Revenue'], axis=1)
+df['Type of ownership'].replace('$50 to $100 million (USD)', 'Unknown', inplace = True)
+
+
+#Moving from Ownership to Industry
+#df['Type of ownership'].value_counts()
+
+own_to_ind = ['Government', 'College / University', 'Express Delivery Service', 'Hospital', 'Food & Drink Manufacturing', 'Consulting', 'Regional Agencies', 'Utilities', 'Telecommunications Service']
+
+df['Industry'] = df.apply(lambda row: row['Type of ownership'] if row['Type of ownership'] in own_to_ind else row['Industry'], axis=1)
+df['Type of ownership'].replace(own_to_ind, 'Unknown', inplace = True)
+
+del own_to_ind
+
+
+#Moving from Founded to 'Type of ownership'
+#df['Founded'].value_counts()
+
+found_to_own = ['College / University', 'Company - Private', 'Non-profit Organisation', 'Company - Public']
+
+wrong_found=df[df['Founded'].isin(found_to_own)]
+
+df['Type of ownership'] = df.apply(lambda row: row['Founded'] if row['Founded'] in found_to_own else row['Type of ownership'], axis=1)
+df['Founded'].replace(found_to_own, 'Unknown', inplace = True)
+
+del found_to_own,wrong_found
+
+
+#Moving from Founded to Industry and Sector
+
+df['Sector'] = df.apply(lambda row: row['Founded'] if row['Founded'] == 'Government' else row['Sector'], axis=1)
+df['Industry'] = df.apply(lambda row: row['Founded'] if row['Founded'] == 'Government' else row['Industry'], axis=1)
+df['Founded'].replace('Government', 'Unknown', inplace = True)
+
+
+
+
+'''
+Grouping together categories
+'''
+#Creating Others Categories in Industry and Sector
+
+
+
+#df['Industry'].value_counts()
+
+#Combine -1 and Unknown in Type of Owndership, Revenue, Founded, Industry, Sector
+
+
+
+
+'''
+Get company age from Founded
+'''
+# from datetime import datetime
+
+# df['Company Age'] = datetime.now().year - df['Founded'].astype('int32')
+
+
+
 '''
 Extract information from Job Description
+
 '''
+
