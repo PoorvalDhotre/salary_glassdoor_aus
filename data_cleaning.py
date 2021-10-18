@@ -261,15 +261,18 @@ Grouping together categories
 
 #Combine -1 and Unknown in Type of Owndership, Revenue, Founded, Industry, Sector
 
-
+https://stackoverflow.com/questions/35041628/conditionally-create-an-other-category-in-categorical-column
 
 
 '''
 Get company age from Founded
 '''
-# from datetime import datetime
+#df['Founded'].value_counts()
 
-# df['Company Age'] = datetime.now().year - df['Founded'].astype('int32')
+from datetime import datetime
+
+df['Founded'].replace('Unknown', '-1', inplace=True)
+df['Company Age'] = datetime.now().year - df['Founded'].astype('int32')
 
 
 
@@ -277,4 +280,13 @@ Get company age from Founded
 Extract information from Job Description
 
 '''
+
+df['SQL'] = df['Job Description'].apply(lambda desc: 1 if 'sql' in desc.lower() else 0)
+df.SQL.value_counts()
+
+df['Tableau'] = df['Job Description'].apply(lambda desc: 1 if 'tableau' in desc.lower() else 0)
+df.Tableau.value_counts()
+
+df['Excel'] = df['Job Description'].apply(lambda desc: 1 if 'excel' in desc.lower() else 0)
+df['Excel'].value_counts()
 
