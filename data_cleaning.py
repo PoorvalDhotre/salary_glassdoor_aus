@@ -6,16 +6,10 @@ Created on Sat Oct 16 14:04:03 2021
 """
 
 import pandas as pd
+import numpy as np
 
 df = pd.read_csv('glassdoor_jobs.csv')
 
-
-
-#job description - Tools, buzzwords, big data tools, cloud, PhD
-#Remove the word employees from Size
-#Get Age from Founded.
-#Consider creating Age group categories
-#Get rid of stray values in Type of Ownership, Sector, Industry and Founded
 
 
 '''
@@ -42,26 +36,6 @@ Create new column Salary Source by extracting information from Salary field
 df['Salary Source']=df['Salary Estimate'].apply(lambda sal: sal.split('(')[1][0:-2] if 'Glassdoor' in sal else sal.split(':')[0])
 df['Salary Estimate']=df['Salary Estimate'].apply(lambda sal: sal.split('(')[0] if 'Glassdoor' in sal else sal.split(':')[1])
 
-
-
-'''
-#Alternative method as an exercise (using pandas str.split, which usually is more convenient but not in this case)
-
-#Splitting to create two new dataframes
-sal_est_glass=df['Salary Estimate'].str.split('(', expand=True)
-sal_est_emp=df['Salary Estimate'].str.split(':', expand=True)
-
-#Ensure each dataframe shows values only for the relevant rows
-sal_est_emp[0].where(sal_est_emp[1].notna(), inplace=True)
-sal_est_glass[0].where(sal_est_glass[1].notna(), inplace=True)
-
-#Modify dataframe
-df['Salary Source'] = sal_est_glass[1].fillna(sal_est_emp[0])
-df['Salary Estimate'] = sal_est_emp[1].fillna(sal_est_glass[0])
-
-#Drop the instrumental objects
-del sal_est_emp, sal_est_glass
-'''
 
 
 '''
@@ -249,19 +223,25 @@ df['Founded'].replace('Government', 'Unknown', inplace = True)
 
 
 
-
 '''
 Grouping together categories
 '''
-#Creating Others Categories in Industry and Sector
+#Creating Others Category in Industry and Sector
 
+#Refer link below for the logic
+#https://stackoverflow.com/questions/35041628/conditionally-create-an-other-category-in-categorical-column
 
+df['Industry'][df['Industry'].isin(df['Industry'].value_counts()[df['Industry'].value_counts()<10].index)] = 'Other'
+df['Sector'][df['Sector'].isin(df['Sector'].value_counts()[df['Sector'].value_counts()<10].index)] = 'Other'
+    
 
-#df['Industry'].value_counts()
+#Combine -1 and Unknown in Type of Owndership, Revenue, Industry, Sector
 
-#Combine -1 and Unknown in Type of Owndership, Revenue, Founded, Industry, Sector
+df['Type of ownership'] = df['Type of ownership'].replace(['-1', 'Unknown / Non-Applicable'], 'Unknown')
+df['Revenue'] = df['Revenue'].replace(['-1', 'Unknown / Non-Applicable'], 'Unknown')
+df['Industry'] = df['Industry'].replace('-1', 'Unknown')
+df['Sector'] = df['Sector'].replace('-1', 'Unknown')
 
-https://stackoverflow.com/questions/35041628/conditionally-create-an-other-category-in-categorical-column
 
 
 '''
