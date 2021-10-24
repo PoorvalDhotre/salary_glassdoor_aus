@@ -13,14 +13,14 @@ df = pd.read_csv('glassdoor_jobs.csv')
 
 
 '''
-Remove the observations where the salary data is missing
+Remove unwanted rows
 '''
+
+#Remove the observations where the salary data is missing
 df=df[df['Salary Estimate']!='-1']
 
+#Remove irrelevant Job Titles 
 
-'''
-Remove irrelevant Job Titles 
-'''
 relevant= ['scientist', 'data', 'analyst', 'science', 'analysis', 'insight', 'machine learning']
 
 relevance_bool = df['Job Title'].apply(lambda title: True if any([x for x in relevant if x in title.lower()]) else False)
@@ -269,4 +269,16 @@ df.Tableau.value_counts()
 
 df['Excel'] = df['Job Description'].apply(lambda desc: 1 if 'excel' in desc.lower() else 0)
 df['Excel'].value_counts()
+
+
+
+'''
+Export to csv
+'''
+df.to_csv('data_cleaned.csv', index=False)
+
+
+
+
+
 
